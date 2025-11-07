@@ -38,32 +38,22 @@ campus_objects_dataset = dataset_base.copy({{
 
     'has_gt': True,
     'class_names': {config.CLASSES},
-    'label_map': None  # Will use COCO format directly
 }})
 
 # Model configuration for campus objects
-campus_objects_config = coco_base_config.copy({{
-    'name': 'campus_objects_base',
+campus_objects_config = yolact_base_config.copy({{
+    'name': 'campus_objects',
 
     # Dataset
     'dataset': campus_objects_dataset,
-    'num_classes': {config.NUM_CLASSES + 1},  # +1 for background
+    'num_classes': {config.NUM_CLASSES},
 
     # Image settings
     'max_size': {config.IMAGE_SIZE},
-    'min_size': {config.IMAGE_SIZE},
 
     # Training settings
     'lr': {config.LEARNING_RATE},
     'batch_size': {config.BATCH_SIZE},
-    'max_iter': {config.NUM_EPOCHS * 1000},  # Approximate
-
-    # Freeze backbone
-    'freeze_bn': True,
-
-    # Other settings
-    'backbone': resnet{config.BACKBONE[-2:]}_backbone,
-    'name': 'campus_objects_yolact_plus',
 }})
 """
 

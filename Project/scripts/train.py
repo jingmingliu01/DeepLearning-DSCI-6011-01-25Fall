@@ -90,8 +90,6 @@ def create_yolact_dataset_config():
 # ==================== Campus Objects Dataset ====================
 # Added by scripts/train.py
 
-from .config import dataset_base
-
 campus_objects_dataset = dataset_base.copy({{
     'name': 'Campus Objects',
 
@@ -105,7 +103,7 @@ campus_objects_dataset = dataset_base.copy({{
     'class_names': {config.CLASSES},
 }})
 
-campus_objects_config = coco_base_config.copy({{
+campus_objects_config = yolact_base_config.copy({{
     'name': 'campus_objects',
     'dataset': campus_objects_dataset,
     'num_classes': {config.NUM_CLASSES},
