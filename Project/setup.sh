@@ -13,6 +13,7 @@ echo ""
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
+BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Check if Python is installed
@@ -38,28 +39,59 @@ echo ""
 # Create virtual environment
 echo "📦 Setting up virtual environment..."
 if [ "$USE_CONDA" = true ]; then
-    read -p "Create conda environment 'yolact'? (y/n) " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
+    if ! conda env list | grep -q "^yolact "; then
+        echo "Creating conda environment 'yolact'..."
         conda create -n yolact python=3.8 -y
         echo -e "${GREEN}✓ Conda environment created${NC}"
         echo ""
-        echo -e "${YELLOW}⚠ Please activate the environment:${NC}"
+        echo -e "${YELLOW}⚠ Please activate the environment and run setup again:${NC}"
         echo "   conda activate yolact"
-        echo "   Then run this script again"
+        echo "   bash setup.sh"
         exit 0
+    else
+        echo -e "${GREEN}✓ Conda environment 'yolact' exists${NC}"
     fi
 else
     if [ ! -d "venv" ]; then
         python3 -m venv venv
         echo -e "${GREEN}✓ Virtual environment created${NC}"
         echo ""
-        echo -e "${YELLOW}⚠ Please activate the environment:${NC}"
+        echo -e "${YELLOW}⚠ Please activate the environment and run setup again:${NC}"
         echo "   source venv/bin/activate"
-        echo "   Then run this script again"
+        echo "   bash setup.sh"
         exit 0
+    else
+        echo -e "${GREEN}✓ Virtual environment exists${NC}"
     fi
 fi
+echo ""
+
+# Check if in virtual environment
+if [ -z "$VIRTUAL_ENV" ] && [ -z "$CONDA_DEFAULT_ENV" ]; then
+    echo -e "${YELLOW}⚠ No virtual environment activated!${NC}"
+    echo "Please activate your environment first:"
+    if [ "$USE_CONDA" = true ]; then
+        echo "   conda activate yolact"
+    else
+        echo "   source venv/bin/activate"
+    fi
+    exit 1
+fi
+
+# Install PyTorch
+echo "🔥 Installing PyTorch..."
+echo -e "${BLUE}ℹ️  PyTorch installation depends on your system.${NC}"
+echo ""
+read -p "Do you have NVIDIA GPU with CUDA? (y/n) " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "Installing PyTorch with CUDA 11.8 support..."
+    pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+else
+    echo "Installing PyTorch (CPU only)..."
+    pip install torch torchvision
+fi
+echo -e "${GREEN}✓ PyTorch installed${NC}"
 echo ""
 
 # Install dependencies
@@ -87,23 +119,44 @@ echo ""
 
 # Download pretrained weights
 echo "💾 Downloading pretrained weights..."
+echo -e "${BLUE}ℹ️  Source: HuggingFace (dbolya/yolact-plus-resnet50)${NC}"
 if [ ! -f "weights/yolact_plus_resnet50_54_800000.pth" ]; then
-    echo "Installing gdown..."
-    pip install gdown
+    echo "Downloading weights (177 MB, this may take a few minutes)..."
 
-    echo "Downloading weights (this may take a few minutes)..."
-    cd weights/
-    gdown 1Uww4nwh1FJE9L9fGPVUcPMLS7_qXj7JX
-
-    # Rename if needed
-    if [ -f "yolact_plus_base_54_800000.pth" ]; then
-        mv yolact_plus_base_54_800000.pth yolact_plus_resnet50_54_800000.pth
+    # Try wget first
+    if command -v wget &> /dev/null; then
+        cd weights/
+        wget -O yolact_plus_resnet50_54_800000.pth \
+            "https://huggingface.co/dbolya/yolact-plus-resnet50/resolve/main/yolact_plus_resnet50_54_800000.pth?download=true"
+        cd ..
+        echo -e "${GREEN}✓ Weights downloaded${NC}"
+    # Try curl as fallback
+    elif command -v curl &> /dev/null; then
+        cd weights/
+        curl -L -o yolact_plus_resnet50_54_800000.pth \
+            "https://huggingface.co/dbolya/yolact-plus-resnet50/resolve/main/yolact_plus_resnet50_54_800000.pth?download=true"
+        cd ..
+        echo -e "${GREEN}✓ Weights downloaded${NC}"
+    else
+        echo -e "${RED}❌ Neither wget nor curl is available${NC}"
+        echo ""
+        echo -e "${YELLOW}Please download manually:${NC}"
+        echo "1. Visit: https://huggingface.co/dbolya/yolact-plus-resnet50"
+        echo "2. Download: yolact_plus_resnet50_54_800000.pth"
+        echo "3. Place in: weights/yolact_plus_resnet50_54_800000.pth"
     fi
-
-    cd ..
-    echo -e "${GREEN}✓ Weights downloaded${NC}"
 else
     echo -e "${YELLOW}⚠ Weights already exist, skipping${NC}"
+fi
+echo ""
+
+# Verify installation
+echo "🧪 Verifying installation..."
+python3 -c "import torch; print(f'PyTorch: {torch.__version__}'); print(f'CUDA available: {torch.cuda.is_available()}')" 2>&1
+if [ $? -eq 0 ]; then
+    echo -e "${GREEN}✓ Installation verified${NC}"
+else
+    echo -e "${RED}❌ Installation verification failed${NC}"
 fi
 echo ""
 

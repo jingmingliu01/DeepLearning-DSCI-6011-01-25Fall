@@ -1,8 +1,22 @@
 # YOLACT++ Campus Objects - Python Dependencies
 
-# Deep Learning Framework
-torch>=1.7.0
-torchvision>=0.8.0
+# ==================== INSTALLATION NOTES ====================
+# For PyTorch, visit https://pytorch.org/get-started/locally/
+# to get the correct command for your system (CUDA version matters!)
+#
+# Example for CUDA 11.8:
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+#
+# Example for CPU only:
+#   pip install torch torchvision
+# ===========================================================
+
+# Deep Learning Framework (install separately using command above)
+# torch>=1.7.0
+# torchvision>=0.8.0
+
+# Required for pycocotools
+Cython>=0.29.0
 
 # Image Processing
 Pillow>=8.0.0

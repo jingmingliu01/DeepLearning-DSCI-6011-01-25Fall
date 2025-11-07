@@ -87,19 +87,29 @@ git clone https://github.com/dbolya/yolact.git
 
 ### 1.6 下载预训练权重
 
-**方法1：使用gdown（推荐）**
+**方法1：使用wget（推荐）**
 ```bash
-pip install gdown
 cd weights/
-gdown 1Uww4nwh1FJE9L9fGPVUcPMLS7_qXj7JX
-# 重命名为标准名称
-mv yolact_plus_*.pth yolact_plus_resnet50_54_800000.pth
+wget -O yolact_plus_resnet50_54_800000.pth \
+    "https://huggingface.co/dbolya/yolact-plus-resnet50/resolve/main/yolact_plus_resnet50_54_800000.pth?download=true"
+cd ..
 ```
 
-**方法2：手动下载**
-1. 访问: https://drive.google.com/file/d/1Uww4nwh1FJE9L9fGPVUcPMLS7_qXj7JX/view
-2. 下载 `yolact_plus_resnet50_54_800000.pth`
-3. 放到 `Project/weights/` 目录
+**方法2：使用curl**
+```bash
+cd weights/
+curl -L -o yolact_plus_resnet50_54_800000.pth \
+    "https://huggingface.co/dbolya/yolact-plus-resnet50/resolve/main/yolact_plus_resnet50_54_800000.pth?download=true"
+cd ..
+```
+
+**方法3：手动下载**
+1. 访问: https://huggingface.co/dbolya/yolact-plus-resnet50
+2. 点击 Files and versions → yolact_plus_resnet50_54_800000.pth
+3. 点击下载图标
+4. 放到 `Project/weights/` 目录
+
+**注意**：预训练权重已从Google Drive迁移到HuggingFace平台。旧的Google Drive链接已失效。
 
 ### 1.7 验证安装
 
@@ -626,13 +636,24 @@ Project/
 # 1. 安装环境
 conda create -n yolact python=3.8
 conda activate yolact
+
+# 2. 安装PyTorch（根据你的系统选择）
+# GPU版本（CUDA 11.8）：
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+# 或 CPU版本：
+# pip install torch torchvision
+
+# 3. 安装其他依赖
 pip install -r requirements.txt
 
-# 2. 克隆YOLACT++
+# 4. 克隆YOLACT++
 git clone https://github.com/dbolya/yolact.git
 
-# 3. 下载预训练权重
-gdown 1Uww4nwh1FJE9L9fGPVUcPMLS7_qXj7JX -O weights/yolact_plus_resnet50_54_800000.pth
+# 5. 下载预训练权重（从HuggingFace）
+cd weights/
+wget -O yolact_plus_resnet50_54_800000.pth \
+    "https://huggingface.co/dbolya/yolact-plus-resnet50/resolve/main/yolact_plus_resnet50_54_800000.pth?download=true"
+cd ..
 ```
 
 ### 阶段2：数据收集与标注（1-2周）
