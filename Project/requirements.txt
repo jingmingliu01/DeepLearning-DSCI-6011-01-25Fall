@@ -1,0 +1,35 @@
+# YOLACT++ Campus Objects - Python Dependencies
+
+# Deep Learning Framework
+torch>=1.7.0
+torchvision>=0.8.0
+
+# Image Processing
+Pillow>=8.0.0
+opencv-python>=4.5.0
+
+# COCO Tools
+pycocotools>=2.0.0
+
+# Scientific Computing
+numpy>=1.19.0
+scipy>=1.5.0
+matplotlib>=3.3.0
+
+# Web Framework (for deployment)
+Flask>=2.0.0
+Werkzeug>=2.0.0
+
+# Utilities
+tqdm>=4.50.0
+tensorboard>=2.4.0
+
+# YOLACT++ specific (will be installed from repo)
+# cython - required for pycocotools
+
+# Optional: For downloading weights
+# gdown>=4.0.0
+
+# Development Tools (optional)
+# jupyter>=1.0.0
+# ipython>=7.0.0
